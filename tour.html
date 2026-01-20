@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>krpano - panorama3</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<style>
+		html { height:100%; }
+		body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-color:#000000; }
+	</style>
+</head>
+<body>
+
+	<script src="tour.js"></script>
+
+	<div style="width:100%;height:100%;">
+		<noscript><table style="width:100%;height:100%;"><tr style="vertical-align:middle;text-align:center;"><td>ERROR:<br><br>Javascript not activated<br><br></td></tr></table></noscript>
+		<!-- pano container required by krpano -->
+		<div id="pano" style="width:100%;height:100%;position:relative;z-index:1;"></div>
+		<script>
+			// Leaflet removed: using krpano built-in map instead
+
+			window.addEventListener('load', function(){
+				try{
+					if(typeof embedpano === 'function'){
+						var panoEl = document.getElementById('pano');
+						console.log('embedpano: pano element at load', panoEl);
+						if(!panoEl) console.warn('embedpano: #pano non trovato al load');
+						try{
+							embedpano({
+								target: panoEl || 'pano',
+								xml: "tour.xml",
+								passQueryParameters: "startscene,startlookat",
+								onready: function(krpano){
+										window.krpano = krpano;
+										// hide any previous error overlays (in case a prior attempt failed)
+										var pe = document.getElementById('pano-error');
+										if(pe) pe.style.display = 'none';
+										var me = document.getElementById('map-error');
+										if(me) me.style.display = 'none';
+								}
+							});
+						}catch(e){
+							console.error('embedpano init error', e);
+							showPanoError('Errore avviando krpano: '+(e && (e.message||e.toString()) || 'sconosciuto'));
+						}
+					}else{
+						console.error('embedpano non definita');
+						showPanoError('krpano non caricato: controllare `tour.js`');
+					}
+				}catch(e){
+					console.error('embedpano error', e);
+					showPanoError('Errore avviando krpano: '+(e && (e.message||e.toString()) || 'sconosciuto'));
+				}
+			});
+		</script>
+
+		<div id="pano-error" style="display:none; position:absolute; left:0; top:0; right:0; bottom:0; z-index:2000; background:rgba(0,0,0,0.85); color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px;">
+			<div>
+				<h2 style="margin:0 0 8px 0;">Errore caricamento panorama</h2>
+				<div id="pano-error-text"></div>
+			</div>
+		</div>
+
+		<script>
+			function showPanoError(msg){
+				document.getElementById('pano-error-text').textContent = msg;
+				document.getElementById('pano-error').style.display = 'flex';
+			}
+			
+			// map fallback removed
+		</script>
+		<!-- krpano built-in map used; external Leaflet map removed -->
+	</div>
+
+	<style>
+		#map{ position: absolute; right: 12px; bottom: 12px; width: 260px; height: 180px; z-index:1100; border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,0.6); }
+		/* leaflet styles removed */
+	</style>
+
+</body>
+</html>
