@@ -98,6 +98,14 @@
 		 ath="10"
 		 atv="0"
 		 onclick="js(console.log('hotspot DEBUG clicked')); show_popup('Debug: hotspot cliccato');" />
+		 
+	<!-- ESEMPIO HOTSPOT PERSONALIZZATO -->
+        <hotspot name="h_esempio"
+                 style="info_hotspot"
+                 ath="20"
+                 atv="10"
+                 onclick="show_popup('Questo è un esempio di popup personalizzato!');" />
+        <!-- FINE ESEMPIO -->
 	</scene>
 
 	<scene name="scene_panorama2" title="panorama2" onstart="" thumburl="panos/panorama2.tiles/thumb.jpg" lat="45.22085556" lng="11.29424722" alt="48.90" heading="0.0">
