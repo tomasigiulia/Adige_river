@@ -5,8 +5,8 @@
 		if(layer[skin_minimap_container].visible == true,
 			tween(layer[skin_minimap_container].alpha, 0.0, 0.25, default, 
 				set(layer[skin_minimap_container].visible,false);
-				set(layer[skin_minimap_container].width, 340);
-				set(layer[skin_minimap_container].height, 600);
+				set(layer[skin_minimap_container].width, '40%');
+				set(layer[skin_minimap_container].height, '60%');
 				set(layer[skin_minimap_container].state, 'small');
 				set(layer[btn_resize_map].html, '&#8694;');
 				if(layer[skin_minimap].map, layer[skin_minimap].map.updateSize(); );
@@ -533,13 +533,13 @@
 
 		<!-- mini-map container (fixed on panorama) -->
 		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" 
-			   align="lefttop" 
-			   x="-4" y="0" 
-			   width="340" height="600" 
-			   maskchildren="false" 
-			   bgborder="4 0xFFFFFF 1.0" bgshadow="0 2 18 0x000000 0.7" zorder="999"
-			   safearea="false"
-			   state="small">
+			align="lefttop" 
+			x="-4" y="0" 
+			width="40%" height="60%" 
+			maskchildren="false" 
+			bgborder="4 0xFFFFFF 1.0" bgshadow="0 2 18 0x000000 0.7" zorder="999"
+			safearea="false"
+			state="small">
 
 			<layer name="skin_minimap" state="opened" url="" visible="true" 
 				   align="lefttop" width="100%" height="100%" x="0" y="0" zorder="1" 
