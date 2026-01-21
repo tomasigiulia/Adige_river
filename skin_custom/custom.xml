@@ -5,6 +5,10 @@
            url="info.png"
            scale="0.5"
            handcursor="true" />
+    <style name="info_hotspot_attivo"
+           url="info_icon.svg"
+           scale="0.5"
+           handcursor="true" />
 
     <!-- FINESTRA POPUP -->
     <layer name="popup"
@@ -32,10 +36,25 @@
                handcursor="true" />
     </layer>
 
-    <!-- AZIONE -->
-    <action name="show_popup">
-        set(layer[popup].visible,true);
-        set(layer[popup_text].html,%1);
-    </action>
+
+       <!-- Cambia stile hotspot info se la scena è attiva -->
+       <action name="update_info_hotspots_style">
+              for(set(i,0), i LT hotspot.count, inc(i),
+                     if(hotspot[get(i)].style == 'info_hotspot',
+                            if(scene[get(xml.scene)].hotspot[get(i)].name == hotspot[get(i)].name,
+                                   set(hotspot[get(i)].style, 'info_hotspot_attivo');
+                            ,
+                                   set(hotspot[get(i)].style, 'info_hotspot');
+                            );
+                     );
+              );
+       </action>
+
+       <action name="show_popup">
+              set(layer[popup].visible,true);
+              set(layer[popup_text].html,%1);
+       </action>
+
+       <events onxmlscenechanged="update_info_hotspots_style();" />
 
 </krpano>

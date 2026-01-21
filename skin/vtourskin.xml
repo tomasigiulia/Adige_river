@@ -1007,6 +1007,10 @@
 				layer[skin_map].pantospot(get(scene[get(xml.scene)].mapspotname), get(scene[get(xml.scene)].mapzoom) );
 			);
 
+			if(scene[get(xml.scene)].mapspotname_minimap,
+				layer[skin_minimap].activatespot(get(scene[get(xml.scene)].mapspotname_minimap));
+			);
+
 			if(plugin[skin_gyro].isavailable == true AND (view.vlookatrange == 180 OR global.lpinfo.scene === xml.scene),
 				set(layer[skin_btn_gyro].visible, true);
 			  ,
