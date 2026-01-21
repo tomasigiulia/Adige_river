@@ -525,12 +525,36 @@
 
 
 		<!-- mini-map container (fixed on panorama) -->
-		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="-12" y="0" width="340" height="600" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" bgborder="6 0xFFFFFF 1.0" bgshadow="0 0 0 0x000000 0.0" zorder="999" safearea="false">
-			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="340" height="600" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.95" maptype="satellite" css="overflow:hidden; box-sizing:border-box;" bgborder="0 0xFFFFFF 0.0" bgshadow="0 2 16 0x000000 0.6" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
+		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" 
+			   align="lefttop" 
+			   x="-4" y="0" 
+			   width="340" height="600" 
+			   maskchildren="false" 
+			   bgborder="4 0xFFFFFF 1.0" bgshadow="0 2 18 0x000000 0.7" zorder="999"
+			   safearea="false"
+			   state="small">
+
+			<layer name="skin_minimap" state="opened" url="" visible="true" 
+				   align="lefttop" width="100%" height="100%" x="0" y="0" zorder="1" 
+				   lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.95" maptype="satellite" 
+				   css="overflow:hidden; box-sizing:border-box;" 
+				   onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
 				<maptypecontrol visible="false" align="righttop" x="6" y="6" buttonalign="v" scale.mobile="1.0" />
 				<radar visible="true" headingoffset="0" />
 				<spotstyle name="DEFAULT" url="vtourskin_mapspot.png" activeurl="vtourskin_mapspotactive.png" edge="bottom" x="-6" y="-10" scale="0.6" />
 			</layer>
+
+			<layer name="btn_resize_map" type="text" keep="true"
+				   align="righttop" x="0" y="0" width="40" height="40" 
+				   css="text-align:center; line-height:38px; font-weight:bold; font-family:Arial; color:#FFFFFF; font-size:24px; cursor:pointer;"
+				   bg="true" bgcolor="0x2D3E50" bgalpha="1.0" 
+				   bgcapture="true"
+				   capture="true"
+				   html="&#8694;" 
+				   tooltip="Espandi / Riduci"
+				   onclick="toggle_minimap_size();" 
+				   zorder="10000"
+			/>
 		</layer>
 
 		<layer name="skin_splitter_bottom" type="container" align="bottom" width="100%" height="calc:skin_settings.controlbar_offset + skin_settings.controlbar_height - skin_settings.controlbar_overlap" y="0" maskchildren="true" onloaded="skin_calc_opened_closed();" zorder="2">
@@ -1610,5 +1634,20 @@
 		);
 	</action>
 	
+
+	<action name="toggle_minimap_size">
+		trace('Pulsante ridimensiona premuto. Stato attuale: ', layer[skin_minimap_container].state);
+		if(layer[skin_minimap_container].state == 'small',
+			tween(layer[skin_minimap_container].width, 900, 0.5, easeOutQuint);
+			tween(layer[skin_minimap_container].height, 80%, 0.5, easeOutQuint);
+			set(layer[skin_minimap_container].state, 'big');
+			set(layer[btn_resize_map].html, '&#8690;'); if(layer[skin_minimap].map, layer[skin_minimap].map.updateSize(); );
+		,
+			tween(layer[skin_minimap_container].width, 340, 0.5, easeOutQuint);
+			tween(layer[skin_minimap_container].height, 600, 0.5, easeOutQuint);
+			set(layer[skin_minimap_container].state, 'small');
+			set(layer[btn_resize_map].html, '&#8694;'); if(layer[skin_minimap].map, layer[skin_minimap].map.updateSize(); );
+		);
+	</action>
 
 </krpano>
