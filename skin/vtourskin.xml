@@ -3,7 +3,14 @@
 
 	<action name="switch_minimap_custom">
 		if(layer[skin_minimap_container].visible == true,
-			tween(layer[skin_minimap_container].alpha, 0.0, 0.25, default, set(layer[skin_minimap_container].visible,false));
+			tween(layer[skin_minimap_container].alpha, 0.0, 0.25, default, 
+				set(layer[skin_minimap_container].visible,false);
+				set(layer[skin_minimap_container].width, 340);
+				set(layer[skin_minimap_container].height, 600);
+				set(layer[skin_minimap_container].state, 'small');
+				set(layer[btn_resize_map].html, '&#8694;');
+				if(layer[skin_minimap].map, layer[skin_minimap].map.updateSize(); );
+			);
 		,
 			set(layer[skin_minimap_container].visible, true);
 			tween(layer[skin_minimap_container].alpha, 1.0, 0.25);
