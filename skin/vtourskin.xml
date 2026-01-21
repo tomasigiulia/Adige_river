@@ -64,7 +64,7 @@
 	<vtourskinxmlpath url="./" />
 
 	<!-- iPhone X safe-area support: use the horizontal safe-area only -->	
-	<display safearea="h-only" />
+	<display safearea="false" />
 
 	<!-- mouse / touch / keyboard(button) control settings - https://krpano.com/docu/xml/#control -->
 	<control mouse="drag"
@@ -506,8 +506,8 @@
 
 
 		<!-- mini-map container (fixed on panorama) -->
-		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="2" y="10" width="220" height="400" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" bgborder="4 0xFFFFFF 1.0" bgshadow="0 2 18 0x000000 0.7" zorder="999">
-			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="220" height="400" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.95" maptype="satellite" css="border-radius:10px; overflow:hidden; border:4px solid rgba(255,255,255,0.95); box-sizing:border-box;" bgborder="0 0x000000 0.0" bgshadow="0 2 16 0x000000 0.6" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
+		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="-12" y="0" width="340" height="600" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" bgborder="0 0xFFFFFF 0.0" bgshadow="0 0 0 0x000000 0.0" zorder="999" safearea="false">
+			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="340" height="600" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.95" maptype="satellite" css="overflow:hidden; box-sizing:border-box;" bgborder="0 0x000000 0.0" bgshadow="0 2 16 0x000000 0.6" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
 				<maptypecontrol visible="false" align="righttop" x="6" y="6" buttonalign="v" scale.mobile="1.0" />
 				<radar visible="true" headingoffset="0" />
 				<spotstyle name="DEFAULT" url="vtourskin_mapspot.png" activeurl="vtourskin_mapspotactive.png" edge="bottom" x="-6" y="-10" scale="0.6" />
@@ -584,8 +584,8 @@
 		onloadcomplete="skin_showloading(false);"
 		onidle="skin_deeplinking_update_url();"
 		onresize="skin_onresize();"
-		onenterfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '64|576|64|64'); set(layer[skin_minimap_container].align, 'leftmiddle'); set(layer[skin_minimap_container].x, 12); set(layer[skin_minimap_container].y, 0); set(layer[skin_minimap_container].zorder, 1001);"
-		onexitfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '0|576|64|64'); set(layer[skin_minimap_container].align, 'lefttop'); set(layer[skin_minimap_container].x, 2); set(layer[skin_minimap_container].y, 10); set(layer[skin_minimap_container].zorder, 999);"
+		onenterfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '64|576|64|64'); set(layer[skin_minimap_container].align, 'lefttop'); set(layer[skin_minimap_container].x, -4); set(layer[skin_minimap_container].y, 0); set(layer[skin_minimap_container].zorder, 1001);"
+		onexitfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '0|576|64|64'); set(layer[skin_minimap_container].align, 'lefttop'); set(layer[skin_minimap_container].x, -4); set(layer[skin_minimap_container].y, 0); set(layer[skin_minimap_container].zorder, 999);"
 		onkeydown="skin_keydown_event();"
 		/>
 
@@ -834,12 +834,18 @@
 	<action name="skin_onresize" scope="local">
 		mul(mh, area.pixelheight, -1);
 		if(layer[skin_thumbs].state == 'opened', add(mh,layer[skin_thumbs].height); );
-		if(layer[skin_map].state    == 'opened', sub(hh,area.pixelheight,skin_settings.controlbar_offset); sub(hh,layer[skin_control_bar].height); sub(hh,32); add(mh,hh); add(mh,skin_settings.controlbar_overlap); sub(mh, layer[skin_scroll_layer].y_offset); copy(layer[skin_map].height, hh); );
+		if(layer[skin_map].state == 'opened', sub(hh,area.pixelheight,skin_settings.controlbar_offset); sub(hh,layer[skin_control_bar].height); sub(hh,32); add(mh,hh); add(mh,skin_settings.controlbar_overlap); sub(mh, layer[skin_scroll_layer].y_offset); copy(layer[skin_map].height, hh); );
 		add(mh, layer[skin_scroll_layer].y_offset);
 		set(layer[skin_scroll_layer].y, get(mh));
 		if(display.safearea_inset, calc(layer[skin_btn_show].y, skin_settings.controlbar_height - skin_settings.controlbar_offset_closed - (display.safearea_inset.b LT 0 ? display.safearea_inset.b : 0)); );
 		skin_video_updateseekbarwidth();
 		skin_arrange_buttons();
+
+		set(layer[skin_minimap_container].parent, 'STAGE');
+		set(layer[skin_minimap_container].align, 'lefttop');
+		set(layer[skin_minimap_container].x, 0);
+		set(layer[skin_minimap_container].y, 0);
+		set(layer[skin_minimap_container].safearea, false);
 	</action>
 
 
