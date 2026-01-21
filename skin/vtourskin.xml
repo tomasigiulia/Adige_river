@@ -154,6 +154,96 @@
 		<!-- hide the skin -->
 		skin_hideskin(instant);
 	</action>
+
+	<!-- wrapper for onnewscene to avoid changing minimap zoom on initial load -->
+	<action name="skin_onnewscene_minimap" scope="local">
+		if(get(global.skin_minimap_firstscene) == true,
+			set(global.skin_minimap_firstscene, false);
+		,
+			skin_center_minimap();
+		);
+	</action>
+
+
+	<!-- add map-spots to the mini-map (called from mini-map onmapready) -->
+	<action name="skin_addmapspots_minimap" scope="local">
+		for(set(i,0), i LT scene.count, inc(i),
+			if(scene[get(i)].lat,
+				calc(spotname, 'mspot' + i);
+				calc(spotclickevent, 'skin_hidetooltips(); activatespot(' + spotname + '); skin_loadscene(' + scene[get(i)].name + ',get(skin_settings.loadscene_blend)); delayedcall(0.5,skin_showmap(false));' );
+				copy(scene[get(i)].mapspotname_minimap, spotname);
+				caller.addspot(get(spotname), get(scene[get(i)].lat), get(scene[get(i)].lng), get(scene[get(i)].heading), false, get(spotclickevent), null);
+			);
+		);
+		currentscene = xml.scene != null ? scene[get(xml.scene)] : null;
+		if(currentscene,
+			caller.activatespot( currentscene.mapspotname_minimap );
+		);
+
+		<!-- ensure minimap zoom fits all spots after adding them -->
+		if(caller, caller.zoomToSpotsExtent(); );
+	</action>
+
+	<!-- setup mini-map: add spots and bind events -->
+	<action name="skin_setup_minimap" scope="local">
+		skin_addmapspots_minimap();
+		skin_bind_map_events();
+			if(isvalue(currentscene.lat) AND isvalue(currentscene.lng),
+				<!-- compute zoom that fits all spots, then center on current scene while keeping that zoom -->
+				if(layer[skin_minimap],
+					layer[skin_minimap].zoomToSpotsExtent();
+					copy(_fitzoom, get(layer[skin_minimap].zoom));
+					set(layer[skin_minimap].lat, get(currentscene.lat));
+					set(layer[skin_minimap].lng, get(currentscene.lng));
+					set(layer[skin_minimap].zoom, get(_fitzoom));
+				,
+					set(layer[skin_minimap].lat, get(currentscene.lat));
+					set(layer[skin_minimap].lng, get(currentscene.lng));
+					if(isvalue(currentscene.mapzoom),
+						set(layer[skin_minimap].zoom, get(currentscene.mapzoom));
+					,
+						set(layer[skin_minimap].zoom, 21);
+					);
+				);
+			);
+			set(layer[skin_minimap].lat, get(lat));
+			set(layer[skin_minimap].lng, get(lng));
+			set(layer[skin_minimap].zoom, get(zoom));
+		);
+	</action>
+
+	<!-- bind map move events from the main map to update the mini-map -->
+	<action name="skin_bind_map_events" scope="local">
+		if(layer[skin_map],
+			txtadd(layer[skin_map].onmapmove, "skin_sync_minimap_from_main(layer[skin_map]);" );
+			txtadd(layer[skin_map].onmapmoveend, "skin_sync_minimap_from_main(layer[skin_map]);" );
+			<!-- also update minimap when main map is clicked/dragged -->
+			txtadd(layer[skin_map].onmapclick, "skin_sync_minimap_from_main(layer[skin_map]);" );
+		);
+	</action>
+
+	<!-- when clicking the minimap center the main map and open it -->
+	<action name="skin_minimap_click" scope="local" args="lat,lng">
+		if(isvalue(get(lat)) AND isvalue(get(lng)),
+			if(layer[skin_map],
+				caller = layer[skin_map];
+				# set center on main map and open full map
+				caller.setcenter(get(lat), get(lng), get(layer[skin_map].zoom));
+				skin_showmap(true);
+			);
+		);
+	</action>
+
+	<!-- center the minimap on the current scene (if scene has lat/lng) -->
+	<action name="skin_center_minimap" scope="local">
+		currentscene = xml.scene != null ? scene[get(xml.scene)] : null;
+		if(currentscene,
+			if(isvalue(currentscene.lat) AND isvalue(currentscene.lng),
+				set(layer[skin_minimap].lat, get(currentscene.lat));
+				set(layer[skin_minimap].lng, get(currentscene.lng));
+			);
+		);
+	</action>
 	
 	<action name="skin_webvr_onavailable" scope="local">
 		if(device.mobilevr == false,
@@ -189,6 +279,23 @@
 			if(layer[webvr_rotate_to_landscape_request], tween(layer[webvr_rotate_to_landscape_request].alpha, 0.0, 0.0); );
 			set(hotspot[skin_webvr_prev_scene].visible, false);
 			set(hotspot[skin_webvr_next_scene].visible, false);
+
+		<!-- small map layer selector (OpenStreetMap / ArcGIS) -->
+		<layer name="map_layer_selector" keep="true" type="container" align="righttop" x="10" y="10" width="120" height="70" bgalpha="0.45" bgcolor="0x000000" zorder="101">
+
+		    <layer name="btn_osm" keep="true" type="text" align="top" y="6" width="100" height="24"
+			    css="color:#FFFFFF; font-family:Arial; font-size:13px; text-align:center; padding:4px 6px;"
+			    text="OpenStreetMap"
+			    onclick="plugin[map].set(maptype, osm);"
+			    />
+
+		    <layer name="btn_arcgis" keep="true" type="text" align="top" y="38" width="100" height="24"
+			    css="color:#FFFFFF; font-family:Arial; font-size:13px; text-align:center; padding:4px 6px;"
+			    text="ArcGIS Satellite"
+			    onclick="plugin[map].set(maptype, arcgis);"
+			    />
+
+		</layer>
 			set(events[skin_webvr_and_gyro_events].onviewchange, null);
 		);
 	</action>
@@ -383,15 +490,27 @@
 						<layer name="skin_thumbs" state="closed" type="scrollarea" direction="h" align="top" width="100%" height="100" zorder="1" onloaded="skin_updatethumbsview(false);" onscroll="skin_updatethumbscroll();" />
 					</layer>
 					<layer name="skin_map_container" type="container" align="leftop" width="100%" height="100%" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true">
-						<layer name="skin_map" state="closed" url="" visible="false" align="lefttop" width="100%" height="50%" x="0" y="0" zorder="1" lat="0" lng="0" zoom="10" bgalpha="0" maptype="satellite" onmapready="skin_addmapspots();">
+						<layer name="skin_map" state="closed" url="" visible="false" align="lefttop" width="100%" height="50%" x="0" y="0" zorder="1" lat="0" lng="0" zoom="10" bgalpha="0" maptype="satellite" onmapready="skin_addmapspots(); skin_setup_minimap();">
 							<maptypecontrol visible="true" align="righttop" x="5" y="5" buttonalign="v" scale.mobile="1.5" />
 							<radar visible="false" headingoffset="0" />
 							<spotstyle name="DEFAULT" url="vtourskin_mapspot.png" activeurl="vtourskin_mapspotactive.png" edge="bottom" x="-5" y="-8" scale="0.5" />
 							<layer name="skin_map_zoom_in"  style="skin_base" visible="get:skin_settings.maps_zoombuttons" crop="9|512|46|64"  align="right" x="0" y="-40" zorder="2" ondown="layer[skin_map].zoomin();  skin_buttonglow(get(name));" onup="skin_buttonglow(null);" />
 							<layer name="skin_map_zoom_out" style="skin_base" visible="get:skin_settings.maps_zoombuttons" crop="73|512|46|64" align="right" x="0" y="+40" zorder="2" ondown="layer[skin_map].zoomout(); skin_buttonglow(get(name));" onup="skin_buttonglow(null);" />
 						</layer>
+
+
 					</layer>
 				</layer>
+			</layer>
+		</layer>
+
+
+		<!-- mini-map container (fixed on panorama) -->
+		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="2" y="10" width="140" height="260" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" zorder="999">
+			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="140" height="260" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.9" maptype="satellite" css="border-radius:8px; overflow:hidden;" bgborder="2 0xFFFFFF 0.6" bgshadow="0 2 10 0x000000 0.5" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
+				<maptypecontrol visible="false" align="righttop" x="5" y="5" buttonalign="v" scale.mobile="1.0" />
+				<radar visible="true" headingoffset="0" />
+				<spotstyle name="DEFAULT" url="vtourskin_mapspot.png" activeurl="vtourskin_mapspotactive.png" edge="bottom" x="-5" y="-8" scale="0.45" />
 			</layer>
 		</layer>
 
@@ -459,16 +578,16 @@
 
 	<!-- skin events -->
 	<events name="skin_events" keep="true"
-	        onxmlcomplete="set(events[skin_events].onxmlcomplete, skin_showloading(true); ); skin_showloading(true); skin_startup();"
-	        onnewpano="skin_update_scene_infos(); skin_deeplinking_update_url();"
-	        onnewscene="skin_updatethumbsview(true);"
-	        onloadcomplete="skin_showloading(false);"
-	        onidle="skin_deeplinking_update_url();"
-	        onresize="skin_onresize();"
-	        onenterfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '64|576|64|64');"
-	        onexitfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '0|576|64|64');"
-	        onkeydown="skin_keydown_event();"
-	        />
+		onxmlcomplete="set(events[skin_events].onxmlcomplete, skin_showloading(true); ); skin_showloading(true); set(global.skin_minimap_firstscene, true); skin_startup();"
+		onnewpano="skin_update_scene_infos(); skin_deeplinking_update_url();"
+		onnewscene="skin_updatethumbsview(true); skin_onnewscene_minimap();"
+		onloadcomplete="skin_showloading(false);"
+		onidle="skin_deeplinking_update_url();"
+		onresize="skin_onresize();"
+		onenterfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '64|576|64|64');"
+		onexitfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '0|576|64|64');"
+		onkeydown="skin_keydown_event();"
+		/>
 
 
 	<!-- skin actions -->
@@ -530,14 +649,20 @@
 		if (!layer[skin_map].url,
 			if(skin_settings.maps_type == 'bing',
 				copy(layer[skin_map].key, skin_settings.maps_bing_api_key);
+				copy(layer[skin_minimap].key, skin_settings.maps_bing_api_key);
 				set(layer[skin_map].url, '%VIEWER%/plugins/bingmaps.js');
+				set(layer[skin_minimap].url, '%VIEWER%/plugins/bingmaps.js');
 			  ,skin_settings.maps_type == 'google',
 			 	copy(layer[skin_map].key, skin_settings.maps_google_api_key);
+				copy(layer[skin_minimap].key, skin_settings.maps_google_api_key);
 				set(layer[skin_map].url, '%VIEWER%/plugins/googlemaps.js');
+				set(layer[skin_minimap].url, '%VIEWER%/plugins/googlemaps.js');
 			  ,
 				copy(layer[skin_map].tileprovider, skin_settings.maps_type);
+				copy(layer[skin_minimap].tileprovider, skin_settings.maps_type);
 				includexml("%VIEWER%/plugins/krpanomaps.xml",
 					layer[skin_map].loadstyle("krpanomaps");
+					layer[skin_minimap].loadstyle("krpanomaps");
 				);
 			);
 		);
