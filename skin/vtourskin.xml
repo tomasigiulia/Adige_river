@@ -506,8 +506,8 @@
 
 
 		<!-- mini-map container (fixed on panorama) -->
-		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="-12" y="0" width="340" height="600" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" bgborder="0 0xFFFFFF 0.0" bgshadow="0 0 0 0x000000 0.0" zorder="999" safearea="false">
-			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="340" height="600" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.95" maptype="satellite" css="overflow:hidden; box-sizing:border-box;" bgborder="0 0x000000 0.0" bgshadow="0 2 16 0x000000 0.6" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
+		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="-12" y="0" width="340" height="600" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" bgborder="6 0xFFFFFF 1.0" bgshadow="0 0 0 0x000000 0.0" zorder="999" safearea="false">
+			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="340" height="600" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.95" maptype="satellite" css="overflow:hidden; box-sizing:border-box;" bgborder="0 0xFFFFFF 0.0" bgshadow="0 2 16 0x000000 0.6" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
 				<maptypecontrol visible="false" align="righttop" x="6" y="6" buttonalign="v" scale.mobile="1.0" />
 				<radar visible="true" headingoffset="0" />
 				<spotstyle name="DEFAULT" url="vtourskin_mapspot.png" activeurl="vtourskin_mapspotactive.png" edge="bottom" x="-6" y="-10" scale="0.6" />
