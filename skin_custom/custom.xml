@@ -1,0 +1,41 @@
+﻿<krpano>
+
+    <!-- STILE del puntino -->
+    <style name="info_hotspot"
+           url="info.png"
+           scale="0.5"
+           handcursor="true" />
+
+    <!-- FINESTRA POPUP -->
+    <layer name="popup"
+           visible="false"
+           align="center"
+           width="400"
+           height="200"
+           bgcolor="0x000000"
+           bgalpha="0.8"
+           handcursor="true">
+
+        <layer name="popup_text"
+               parent="popup"
+               type="text"
+               html=""
+               align="center"
+               width="90%"
+               height="80%" />
+
+        <layer name="popup_close"
+               parent="popup"
+               url="close.png"
+               align="topright"
+               onclick="set(layer[popup].visible,false);"
+               handcursor="true" />
+    </layer>
+
+    <!-- AZIONE -->
+    <action name="show_popup">
+        set(layer[popup].visible,true);
+        set(layer[popup_text].html,%1);
+    </action>
+
+</krpano>
