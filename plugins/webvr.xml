@@ -21,8 +21,8 @@
 	        fullscreen_mirroring="false"
 	        mouse_pointerlock="true"
 	        metaquestlink="true"
-	        vr_cursor_onover="if(handcursor, tween(hotspot[vr_cursor].scale,0.4,0.1); vr_auto_click(get(vr_timeout)); );"
-	        vr_cursor_onout="tween(hotspot[vr_cursor].scale,0.3,0.1);"
+	        vr_cursor_onover=""
+	        vr_cursor_onout=""
 	        onavailable="webvr_onavailable();"
 	        onunavailable="webvr_onunavailable();"
 	        onunknowndevice="webvr_onunknowndevice();"
@@ -35,52 +35,11 @@
 
 
 	<!-- the VR cursor hotspot -->
-	<style name="vr_cursor_style" 
-		url="webvr_vrcursor.png"
-		visible="false"
-		enabled="false"
-		distorted="true"
-		renderer="webgl"
-		crop="0|0|80|80"
-		scale="0.3"
-		depth="120"
-		/>
+	<!-- Stile VR cursor hotspot rimosso -->
 	
-	<action name="webvr_load_vr_cursor_hs" scope="local">
-		addhotspot('vr_cursor', hs);
-		hs.loadstyle(vr_cursor_style);
-		set(hs.keep, true);
-		set(webvr.vr_cursor, 'hotspot[vr_cursor]');
-	</action>
+	<!-- Azione VR cursor hotspot rimossa -->
 	
-	<action name="webvr_load_vr_controller_hs" scope="private:VRCONTROLLERS" args="controllerstyle">
-		removehotspot('vr_controller_l');
-		removehotspot('vr_controller_r');
-		addhotspot('vr_controller_l', vr_ctrl_l);
-		addhotspot('vr_controller_r', vr_ctrl_r);
-		set(vr_ctrl_l.keep, true);
-		set(vr_ctrl_r.keep, true);
-		vr_ctrl_l.loadstyle(calc(controllerstyle ? controllerstyle : (global.display.depthbuffer ? 'vrcontroller_laser' : 'vrcontroller_light_and_point')));
-		vr_ctrl_r.loadstyle(calc(controllerstyle ? controllerstyle : (global.display.depthbuffer ? 'vrcontroller_laser' : 'vrcontroller_light_and_point')));
-
-		<!-- optional: vibrate the controllers on hovering:
-		vr_ctrl_l.addevent('onover', pulse(1.0, 0.25) );
-		vr_ctrl_r.addevent('onover', pulse(1.0, 0.25) ); -->
-		if(!global.webvr.iswebxr,
-			vr_ctrl_l.addevent('onvrcontrollerbutton', 'if(vrbuttonindex == 3 AND vrbuttonstate == "up", vrsetup_open(); );' );
-			vr_ctrl_r.addevent('onvrcontrollerbutton', 'if(vrbuttonindex == 3 AND vrbuttonstate == "up", vrsetup_open(); );' );
-		);
-		
-		set(global.webvr.vr_controller, 'vr_controller_l,vr_controller_r');
-		set(global.have_vr_controllers, true);
-		
-		if(global.webvr.isvrbrowser AND global.webvr.vrcontrollers[0].buttons.length LE 2,
-			<!-- when there are only two buttons on the VR controller (e.g. Oculus Go) use an extra hotspot for the VR-setup -->
-			addhotspot('webvr_vrsetup', vr_setup_hs);
-			vr_setup_hs.loadstyle('webvr_button_style');
-			set(vr_setup_hs, keep=true, ath=0, atv=90, depth=160, zorder=999, torigin=view, html='VR SETUP', oversampling=3, scale=0.2, onclick='vrsetup_open();', onloaded='renderloop( copy(ath,view.hlookat); );');
-		);
-	</action>
+	<!-- Azione VR controller hotspot rimossa -->
 	
 	<action name="webvr_onvrcontrollers" scope="private:VRCONTROLLERS">
 		if(!global.have_vr_controllers, webvr_load_vr_controller_hs(); );

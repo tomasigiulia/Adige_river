@@ -86,26 +86,7 @@
 		<image>
 			<cube url="panos/panorama1.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,1024,2048,3840" />
 		</image>
-<hotspot name="h1"
-         style="info_hotspot"
-         ath="0"
-         atv="0"
-         onclick="show_popup('Questo è un testo informativo');" />
-        
-	<!-- debug hotspot: logs click and shows popup -->
-	<hotspot name="h_debug"
-		 style="info_hotspot"
-		 ath="10"
-		 atv="0"
-		 onclick="js(console.log('hotspot DEBUG clicked')); show_popup('Debug: hotspot cliccato');" />
-		 
-	<!-- ESEMPIO HOTSPOT PERSONALIZZATO -->
-        <hotspot name="h_esempio"
-                 style="info_hotspot"
-                 ath="20"
-                 atv="10"
-                 onclick="show_popup('Questo è un esempio di popup personalizzato!');" />
-        <!-- FINE ESEMPIO -->
+<!-- Hotspot rimossi -->
 	</scene>
 
 	<scene name="scene_panorama2" title="panorama2" onstart="" thumburl="panos/panorama2.tiles/thumb.jpg" lat="45.22085556" lng="11.29424722" alt="48.90" heading="0.0">
