@@ -506,11 +506,11 @@
 
 
 		<!-- mini-map container (fixed on panorama) -->
-		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="2" y="10" width="140" height="260" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" zorder="999">
-			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="140" height="260" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.9" maptype="satellite" css="border-radius:8px; overflow:hidden;" bgborder="2 0xFFFFFF 0.6" bgshadow="0 2 10 0x000000 0.5" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
-				<maptypecontrol visible="false" align="righttop" x="5" y="5" buttonalign="v" scale.mobile="1.0" />
+		<layer name="skin_minimap_container" parent="STAGE" keep="true" type="container" align="lefttop" x="2" y="10" width="220" height="400" bgroundedge="get:skin_settings.design_bgroundedge" maskchildren="true" bgborder="4 0xFFFFFF 1.0" bgshadow="0 2 18 0x000000 0.7" zorder="999">
+			<layer name="skin_minimap" state="opened" url="" visible="true" align="lefttop" width="220" height="400" x="0" y="0" zorder="1" lat="0" lng="0" zoom="21" bgcolor="0x000000" bgalpha="0.95" maptype="satellite" css="border-radius:10px; overflow:hidden; border:4px solid rgba(255,255,255,0.95); box-sizing:border-box;" bgborder="0 0x000000 0.0" bgshadow="0 2 16 0x000000 0.6" onmapready="skin_addmapspots_minimap(); txtadd(layer[skin_minimap].onmapclick, 'skin_minimap_click(%1,%2);');">
+				<maptypecontrol visible="false" align="righttop" x="6" y="6" buttonalign="v" scale.mobile="1.0" />
 				<radar visible="true" headingoffset="0" />
-				<spotstyle name="DEFAULT" url="vtourskin_mapspot.png" activeurl="vtourskin_mapspotactive.png" edge="bottom" x="-5" y="-8" scale="0.45" />
+				<spotstyle name="DEFAULT" url="vtourskin_mapspot.png" activeurl="vtourskin_mapspotactive.png" edge="bottom" x="-6" y="-10" scale="0.6" />
 			</layer>
 		</layer>
 
@@ -584,8 +584,8 @@
 		onloadcomplete="skin_showloading(false);"
 		onidle="skin_deeplinking_update_url();"
 		onresize="skin_onresize();"
-		onenterfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '64|576|64|64');"
-		onexitfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '0|576|64|64');"
+		onenterfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '64|576|64|64'); set(layer[skin_minimap_container].align, 'leftmiddle'); set(layer[skin_minimap_container].x, 12); set(layer[skin_minimap_container].y, 0); set(layer[skin_minimap_container].zorder, 1001);"
+		onexitfullscreen.fullscreensupport="set(layer[skin_btn_fs].crop, '0|576|64|64'); set(layer[skin_minimap_container].align, 'lefttop'); set(layer[skin_minimap_container].x, 2); set(layer[skin_minimap_container].y, 10); set(layer[skin_minimap_container].zorder, 999);"
 		onkeydown="skin_keydown_event();"
 		/>
 
